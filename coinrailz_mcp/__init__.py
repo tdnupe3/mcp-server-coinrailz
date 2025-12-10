@@ -23,9 +23,7 @@ from typing import Any, Optional, List
 import httpx
 
 try:
-    from mcp.server import Server
-    from mcp.server.stdio import stdio_server
-    from mcp.types import Tool, TextContent
+    from mcp.server.fastmcp import FastMCP
 except ImportError:
     print("MCP SDK not installed. Run: pip install mcp")
     raise
@@ -33,7 +31,7 @@ except ImportError:
 COINRAILZ_BASE_URL = os.getenv("COINRAILZ_BASE_URL", "https://coinrailz.com")
 COINRAILZ_API_KEY = os.getenv("COINRAILZ_API_KEY", "")
 
-app = Server("coinrailz")
+mcp = FastMCP("coinrailz")
 
 async def call_coinrailz_service(
     service: str, 
@@ -82,7 +80,7 @@ async def call_coinrailz_service(
 # CATEGORY 1: DISCOVERY & TESTING (1 service)
 # =============================================================================
 
-@app.tool()
+@mcp.tool()
 async def ping_coinrailz(message: str = "Hello from Claude") -> str:
     """
     Test connectivity to Coin Railz x402 payment infrastructure.
@@ -103,7 +101,7 @@ async def ping_coinrailz(message: str = "Hello from Claude") -> str:
 # CATEGORY 2: TRADING INTELLIGENCE (14 services)
 # =============================================================================
 
-@app.tool()
+@mcp.tool()
 async def get_gas_prices(chains: List[str] = None) -> str:
     """
     Get real-time gas prices across multiple blockchain networks.
@@ -121,7 +119,7 @@ async def get_gas_prices(chains: List[str] = None) -> str:
     result = await call_coinrailz_service("gas-price-oracle", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_token_metadata(token_address: str, chain: str = "ethereum") -> str:
     """
     Get metadata for any ERC-20 token including name, symbol, decimals, and total supply.
@@ -139,7 +137,7 @@ async def get_token_metadata(token_address: str, chain: str = "ethereum") -> str
     result = await call_coinrailz_service("token-metadata", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_token_price(token_address: str, chain: str = "ethereum") -> str:
     """
     Get real-time token price from multiple DEX sources.
@@ -157,7 +155,7 @@ async def get_token_price(token_address: str, chain: str = "ethereum") -> str:
     result = await call_coinrailz_service("token-price", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_token_sentiment(token_address: str, chain: str = "ethereum") -> str:
     """
     Get AI-powered social sentiment analysis for a token.
@@ -175,7 +173,7 @@ async def get_token_sentiment(token_address: str, chain: str = "ethereum") -> st
     result = await call_coinrailz_service("token-sentiment", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_trending_tokens(chain: str = "ethereum", limit: int = 10) -> str:
     """
     Get trending tokens across DeFi platforms.
@@ -193,7 +191,7 @@ async def get_trending_tokens(chain: str = "ethereum", limit: int = 10) -> str:
     result = await call_coinrailz_service("trending-tokens", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_whale_alerts(chains: List[str] = None, min_value_usd: int = 100000) -> str:
     """
     Get real-time whale transaction alerts across chains.
@@ -214,7 +212,7 @@ async def get_whale_alerts(chains: List[str] = None, min_value_usd: int = 100000
     result = await call_coinrailz_service("whale-alerts", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_dex_liquidity(token_address: str, chain: str = "ethereum") -> str:
     """
     Get DEX liquidity analysis for a token across major exchanges.
@@ -232,7 +230,7 @@ async def get_dex_liquidity(token_address: str, chain: str = "ethereum") -> str:
     result = await call_coinrailz_service("dex-liquidity", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_trade_signals(token: str = None, chain: str = "ethereum") -> str:
     """
     Get AI-powered trading signals and market recommendations.
@@ -250,7 +248,7 @@ async def get_trade_signals(token: str = None, chain: str = "ethereum") -> str:
     result = await call_coinrailz_service("trade-signals", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_trading_signal(symbol: str, timeframe: str = "1h") -> str:
     """
     Get trading signal for a specific symbol and timeframe.
@@ -268,7 +266,7 @@ async def get_trading_signal(symbol: str, timeframe: str = "1h") -> str:
     result = await call_coinrailz_service("trading-signal", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_sentiment_analysis(query: str, sources: List[str] = None) -> str:
     """
     Get AI-powered sentiment analysis for crypto topics.
@@ -289,7 +287,7 @@ async def get_sentiment_analysis(query: str, sources: List[str] = None) -> str:
     result = await call_coinrailz_service("sentiment-analysis", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_arbitrage_opportunities(chains: List[str] = None, min_profit_pct: float = 0.5) -> str:
     """
     Scan for cross-chain arbitrage opportunities.
@@ -310,7 +308,7 @@ async def get_arbitrage_opportunities(chains: List[str] = None, min_profit_pct: 
     result = await call_coinrailz_service("arbitrage-scanner", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_correlation_matrix(tokens: List[str], timeframe: str = "7d") -> str:
     """
     Get correlation matrix between multiple tokens.
@@ -328,7 +326,7 @@ async def get_correlation_matrix(tokens: List[str], timeframe: str = "7d") -> st
     result = await call_coinrailz_service("correlation-matrix", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_risk_metrics(token_address: str, chain: str = "ethereum") -> str:
     """
     Get comprehensive risk metrics for a token.
@@ -346,7 +344,7 @@ async def get_risk_metrics(token_address: str, chain: str = "ethereum") -> str:
     result = await call_coinrailz_service("risk-metrics", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_batch_quote(tokens: List[str], chain: str = "ethereum") -> str:
     """
     Get quotes for multiple tokens in a single request.
@@ -369,7 +367,7 @@ async def get_batch_quote(tokens: List[str], chain: str = "ethereum") -> str:
 # CATEGORY 3: EXECUTION & INFRASTRUCTURE (4 services)
 # =============================================================================
 
-@app.tool()
+@mcp.tool()
 async def get_multi_chain_balance(wallet_address: str, chains: List[str] = None, include_tokens: bool = True) -> str:
     """
     Get multi-chain wallet balance across 7+ EVM networks.
@@ -392,7 +390,7 @@ async def get_multi_chain_balance(wallet_address: str, chains: List[str] = None,
     result = await call_coinrailz_service("multi-chain-balance", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def build_transaction(
     from_address: str,
     to_address: str,
@@ -426,7 +424,7 @@ async def build_transaction(
     result = await call_coinrailz_service("transaction-builder", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def manage_approvals(wallet_address: str, chain: str = "ethereum", action: str = "list") -> str:
     """
     Manage token approvals for a wallet.
@@ -449,7 +447,7 @@ async def manage_approvals(wallet_address: str, chain: str = "ethereum", action:
     result = await call_coinrailz_service("approval-manager", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def bridge_tokens(
     from_chain: str,
     to_chain: str,
@@ -488,7 +486,7 @@ async def bridge_tokens(
 # CATEGORY 4: PREMIUM SERVICES (3 services)
 # =============================================================================
 
-@app.tool()
+@mcp.tool()
 async def scan_smart_contract(contract_address: str, chain: str = "ethereum") -> str:
     """
     Perform security analysis on a smart contract.
@@ -506,7 +504,7 @@ async def scan_smart_contract(contract_address: str, chain: str = "ethereum") ->
     result = await call_coinrailz_service("contract-scan", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_wallet_risk_score(wallet_address: str, chain: str = "ethereum") -> str:
     """
     Get risk analysis and security scoring for any wallet address.
@@ -524,7 +522,7 @@ async def get_wallet_risk_score(wallet_address: str, chain: str = "ethereum") ->
     result = await call_coinrailz_service("wallet-risk", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def track_portfolio(wallet_address: str, chains: List[str] = None) -> str:
     """
     Get comprehensive portfolio tracking and analytics.
@@ -545,7 +543,7 @@ async def track_portfolio(wallet_address: str, chains: List[str] = None) -> str:
     result = await call_coinrailz_service("portfolio-tracker", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def optimize_portfolio(holdings: List[dict], risk_tolerance: str = "medium") -> str:
     """
     Get AI-powered portfolio optimization recommendations.
@@ -571,7 +569,7 @@ async def optimize_portfolio(holdings: List[dict], risk_tolerance: str = "medium
 # CATEGORY 5: REAL ESTATE (3 services)
 # =============================================================================
 
-@app.tool()
+@mcp.tool()
 async def get_property_valuation(address: str = None, property_id: str = None) -> str:
     """
     Get AI-powered property valuation estimate.
@@ -593,7 +591,7 @@ async def get_property_valuation(address: str = None, property_id: str = None) -
     result = await call_coinrailz_service("property-valuation", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def analyze_lease(lease_terms: dict) -> str:
     """
     Analyze commercial lease terms and market comparison.
@@ -609,7 +607,7 @@ async def analyze_lease(lease_terms: dict) -> str:
     result = await call_coinrailz_service("lease-analysis", lease_terms)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def track_construction_progress(project_id: str) -> str:
     """
     Track construction project progress and milestones.
@@ -631,7 +629,7 @@ async def track_construction_progress(project_id: str) -> str:
 # CATEGORY 6: BANKING/FINANCE (3 services)
 # =============================================================================
 
-@app.tool()
+@mcp.tool()
 async def get_credit_risk_score(entity_id: str, entity_type: str = "individual") -> str:
     """
     Get credit risk assessment for individuals or businesses.
@@ -649,7 +647,7 @@ async def get_credit_risk_score(entity_id: str, entity_type: str = "individual")
     result = await call_coinrailz_service("credit-risk-score", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def detect_fraud(transaction_data: dict) -> str:
     """
     AI-powered fraud detection for transactions.
@@ -665,7 +663,7 @@ async def detect_fraud(transaction_data: dict) -> str:
     result = await call_coinrailz_service("fraud-detection", transaction_data)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def run_compliance_check(entity_id: str, check_type: str = "aml") -> str:
     """
     Run AML/KYC compliance checks.
@@ -688,7 +686,7 @@ async def run_compliance_check(entity_id: str, check_type: str = "aml") -> str:
 # CATEGORY 7: PREDICTION MARKETS (4 services)
 # =============================================================================
 
-@app.tool()
+@mcp.tool()
 async def get_polymarket_events(category: str = None, limit: int = 20) -> str:
     """
     Get active Polymarket prediction market events.
@@ -708,7 +706,7 @@ async def get_polymarket_events(category: str = None, limit: int = 20) -> str:
     result = await call_coinrailz_service("polymarket-events", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_polymarket_odds(event_id: str) -> str:
     """
     Get current odds for a specific Polymarket event.
@@ -725,7 +723,7 @@ async def get_polymarket_odds(event_id: str) -> str:
     result = await call_coinrailz_service("polymarket-odds", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def search_polymarket(query: str, limit: int = 10) -> str:
     """
     Search Polymarket events by keyword.
@@ -743,7 +741,7 @@ async def search_polymarket(query: str, limit: int = 10) -> str:
     result = await call_coinrailz_service("polymarket-search", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def get_prediction_market_odds(event_id: str = None, query: str = None) -> str:
     """
     Get prediction market odds (aggregated from multiple sources).
@@ -770,7 +768,7 @@ async def get_prediction_market_odds(event_id: str = None, query: str = None) ->
 # CATEGORY 8: AI AGENT INFRASTRUCTURE (3 services)
 # =============================================================================
 
-@app.tool()
+@mcp.tool()
 async def create_agent_wallet(agent_name: str, agent_type: str = "trading") -> str:
     """
     Create a new wallet for an AI agent with managed keys.
@@ -788,7 +786,7 @@ async def create_agent_wallet(agent_name: str, agent_type: str = "trading") -> s
     result = await call_coinrailz_service("agent-create-wallet", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def create_instant_agent_wallet(purpose: str = "general") -> str:
     """
     Instantly create a temporary agent wallet for quick operations.
@@ -805,7 +803,7 @@ async def create_instant_agent_wallet(purpose: str = "general") -> str:
     result = await call_coinrailz_service("instant-agent-wallet", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def verify_agent_identity(agent_address: str, proof: str = None) -> str:
     """
     Verify and register an AI agent's on-chain identity (ERC-8004).
@@ -830,7 +828,7 @@ async def verify_agent_identity(agent_address: str, proof: str = None) -> str:
 # CATEGORY 9: ENTERPRISE SERVICES (3 services)
 # =============================================================================
 
-@app.tool()
+@mcp.tool()
 async def request_smart_contract_audit(contract_address: str, chain: str = "ethereum", scope: str = "full") -> str:
     """
     Request comprehensive smart contract security audit.
@@ -853,7 +851,7 @@ async def request_smart_contract_audit(contract_address: str, chain: str = "ethe
     result = await call_coinrailz_service("service/smart-contract-audit", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def request_payment_processing(
     merchant_id: str,
     payment_type: str = "one-time",
@@ -880,7 +878,7 @@ async def request_payment_processing(
     result = await call_coinrailz_service("service/payment-processing", payload)
     return json.dumps(result, indent=2)
 
-@app.tool()
+@mcp.tool()
 async def request_compliance_consultation(
     entity_type: str,
     jurisdictions: List[str],
@@ -908,19 +906,9 @@ async def request_compliance_consultation(
     return json.dumps(result, indent=2)
 
 
-async def _run_server():
-    """Run the MCP server (async implementation)."""
-    async with stdio_server() as (read_stream, write_stream):
-        await app.run(
-            read_stream,
-            write_stream,
-            app.create_initialization_options()
-        )
-
-
 def main():
     """Run the MCP server (synchronous entry point for CLI)."""
-    asyncio.run(_run_server())
+    mcp.run()
 
 
 if __name__ == "__main__":
