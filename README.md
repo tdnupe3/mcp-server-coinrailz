@@ -5,7 +5,7 @@
 [![PyPI version](https://badge.fury.io/py/coinrailz-mcp.svg)](https://pypi.org/project/coinrailz-mcp/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Model Context Protocol (MCP) server that exposes **37+ Coin Railz x402 micropayment services** to Claude and other LLMs. Access blockchain data, trading signals, prediction markets, and crypto analytics directly from Claude.
+A Model Context Protocol (MCP) server that exposes **38 Coin Railz x402 micropayment services** to Claude and other LLMs. Access blockchain data, trading signals, prediction markets, stock/forex sentiment, and crypto analytics directly from Claude.
 
 ## What is MCP?
 
@@ -13,11 +13,11 @@ MCP (Model Context Protocol) is Anthropic's open standard for connecting AI mode
 
 ## Features
 
-- **37+ Crypto Tools for Claude**: Complete coverage of blockchain analytics, trading, and DeFi
+- **38 Crypto Tools for Claude**: Complete coverage of blockchain analytics, trading, DeFi, and traditional markets
 - **First-Call Free**: `gas-price-oracle` and `token-metadata` are FREE for first-time users
 - **API Key Authentication**: Simple prepaid credits system - no blockchain knowledge required
 - **x402 Protocol Support**: Native USDC payments on Base chain for crypto-native agents
-- **9 Service Categories**: From trading intelligence to enterprise compliance
+- **10 Service Categories**: From trading intelligence to traditional markets sentiment
 
 ## Quick Start
 
@@ -63,7 +63,7 @@ Add to your Claude Desktop configuration:
 
 **Free Trial**: `gas-price-oracle` and `token-metadata` are FREE for your first call!
 
-## Available Tools (37+)
+## Available Tools (38)
 
 ### Category 1: Discovery & Testing (1)
 | Tool | Description | Price |
@@ -139,6 +139,12 @@ Add to your Claude Desktop configuration:
 | `request_smart_contract_audit` | Full security audit | $1000 |
 | `request_payment_processing` | Merchant payment setup | $50/hr |
 | `request_compliance_consultation` | AML/KYC consulting | $500 |
+
+### Category 10: Traditional Markets (2) - NEW!
+| Tool | Description | Price |
+|------|-------------|-------|
+| `get_stock_sentiment` | AI stock market sentiment (AAPL, TSLA, etc.) | $0.40 |
+| `get_forex_sentiment` | AI forex pair sentiment (EURUSD, GBPJPY, etc.) | $0.40 |
 
 ## Example Usage in Claude
 

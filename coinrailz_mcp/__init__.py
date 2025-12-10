@@ -2,7 +2,7 @@
 """
 Coin Railz MCP Server - Claude/Anthropic Model Context Protocol Integration
 
-This MCP server exposes ALL 37+ Coin Railz x402 micropayment services as tools for Claude.
+This MCP server exposes ALL 38 Coin Railz x402 micropayment services as tools for Claude.
 It enables AI agents running in Claude to access blockchain data, trading signals,
 prediction markets, and other crypto services through the Coin Railz platform.
 
@@ -903,6 +903,71 @@ async def request_compliance_consultation(
         "services": services
     }
     result = await call_coinrailz_service("service/compliance-consultation", payload)
+    return json.dumps(result, indent=2)
+
+
+# =============================================================================
+# CATEGORY 10: TRADITIONAL MARKETS (2 services) - Added Dec 2025
+# =============================================================================
+
+@mcp.tool()
+async def get_stock_sentiment(
+    symbol: str,
+    include_news: bool = True,
+    include_technicals: bool = True,
+    include_institutional: bool = True
+) -> str:
+    """
+    Get AI-powered stock market sentiment analysis.
+    
+    Args:
+        symbol: Stock ticker symbol (e.g., AAPL, TSLA, MSFT, NVDA)
+        include_news: Include recent news and headlines analysis
+        include_technicals: Include technical analysis and chart patterns
+        include_institutional: Include institutional and insider activity
+    
+    Returns:
+        Sentiment analysis with overall rating, confidence score, key drivers, and trading recommendation.
+    
+    Price: $0.40
+    """
+    payload = {
+        "symbol": symbol.upper(),
+        "includeNews": include_news,
+        "includeTechnicals": include_technicals,
+        "includeInstitutional": include_institutional
+    }
+    result = await call_coinrailz_service("stock-sentiment", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_forex_sentiment(
+    pair: str,
+    include_economic: bool = True,
+    include_central_bank: bool = True,
+    include_geopolitical: bool = True
+) -> str:
+    """
+    Get AI-powered forex currency pair sentiment analysis.
+    
+    Args:
+        pair: Currency pair (e.g., EURUSD, GBPJPY, USDJPY, AUDUSD)
+        include_economic: Include economic factors analysis
+        include_central_bank: Include central bank policy outlook
+        include_geopolitical: Include geopolitical factors
+    
+    Returns:
+        Sentiment analysis with overall rating, confidence score, key drivers, and trading recommendation.
+    
+    Price: $0.40
+    """
+    payload = {
+        "pair": pair.upper(),
+        "includeEconomic": include_economic,
+        "includeCentralBank": include_central_bank,
+        "includeGeopolitical": include_geopolitical
+    }
+    result = await call_coinrailz_service("forex-sentiment", payload)
     return json.dumps(result, indent=2)
 
 

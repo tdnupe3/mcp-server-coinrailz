@@ -1,7 +1,7 @@
 [project]
 name = "coinrailz-mcp"
-version = "1.0.2"
-description = "MCP server exposing 37+ Coin Railz x402 micropayment crypto services to Claude"
+version = "1.0.3"
+description = "MCP server exposing 38 Coin Railz x402 micropayment crypto services to Claude including stock & forex sentiment"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
