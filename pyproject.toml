@@ -1,6 +1,6 @@
 [project]
 name = "coinrailz-mcp"
-version = "1.0.3"
+version = "1.0.4"
 description = "MCP server exposing 38 Coin Railz x402 micropayment crypto services to Claude including stock & forex sentiment"
 readme = "README.md"
 requires-python = ">=3.10"

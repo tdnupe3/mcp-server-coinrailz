@@ -14,12 +14,21 @@ Usage:
 1. Install: pip install mcp httpx
 2. Configure in Claude Desktop config
 3. Set COINRAILZ_API_KEY environment variable (or use first-call-free on select services)
+
+QUICK START (No API key needed!):
+- gas-price-oracle and token-metadata are FREE
+- Run once to auto-get a demo key with $1 trial credits
 """
+
+__version__ = "1.0.4"
 
 import os
 import asyncio
 import json
+import uuid
+import hashlib
 from typing import Any, Optional, List
+from pathlib import Path
 import httpx
 
 try:
@@ -31,6 +40,76 @@ except ImportError:
 COINRAILZ_BASE_URL = os.getenv("COINRAILZ_BASE_URL", "https://coinrailz.com")
 COINRAILZ_API_KEY = os.getenv("COINRAILZ_API_KEY", "")
 
+FREE_TIER_SERVICES = {"gas-price-oracle", "token-metadata"}
+
+_telemetry_sent = False
+_install_id = None
+
+def _get_install_id() -> str:
+    """Get or create a persistent install ID for this SDK instance."""
+    global _install_id
+    if _install_id:
+        return _install_id
+    
+    config_dir = Path.home() / ".coinrailz"
+    config_dir.mkdir(exist_ok=True)
+    install_file = config_dir / "install_id"
+    
+    if install_file.exists():
+        _install_id = install_file.read_text().strip()
+    else:
+        _install_id = f"mcp-{uuid.uuid4().hex[:16]}"
+        install_file.write_text(_install_id)
+    
+    return _install_id
+
+async def _send_telemetry(event: str = "usage"):
+    """Send anonymous telemetry to help improve the SDK."""
+    global _telemetry_sent
+    if _telemetry_sent and event == "install":
+        return
+    
+    try:
+        install_id = _get_install_id()
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            await client.post(
+                f"{COINRAILZ_BASE_URL}/api/sdk/telemetry",
+                json={
+                    "installId": install_id,
+                    "sdkType": "python-mcp",
+                    "sdkVersion": __version__,
+                    "event": event,
+                    "environment": {
+                        "hasApiKey": bool(COINRAILZ_API_KEY),
+                        "baseUrl": COINRAILZ_BASE_URL
+                    }
+                },
+                headers={"User-Agent": f"CoinRailz-MCP-Server/{__version__}"}
+            )
+        _telemetry_sent = True
+    except Exception:
+        pass
+
+async def _get_demo_key() -> Optional[str]:
+    """Automatically fetch a demo API key with $1 trial credits."""
+    try:
+        install_id = _get_install_id()
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                f"{COINRAILZ_BASE_URL}/api/sdk/demo-key",
+                json={
+                    "installId": install_id,
+                    "sdkType": "python-mcp"
+                },
+                headers={"User-Agent": f"CoinRailz-MCP-Server/{__version__}"}
+            )
+            if response.status_code == 200:
+                data = response.json()
+                return data.get("api_key")
+    except Exception:
+        pass
+    return None
+
 mcp = FastMCP("coinrailz")
 
 async def call_coinrailz_service(
@@ -38,16 +117,29 @@ async def call_coinrailz_service(
     payload: dict = None,
     method: str = "POST"
 ) -> dict:
-    """Call a Coin Railz x402 service with API key authentication."""
+    """
+    Call a Coin Railz x402 service with smart payment handling.
+    
+    Features:
+    - Automatically tries free tier services without API key
+    - Auto-fetches demo key if service requires payment
+    - Sends anonymous telemetry to improve SDK experience
+    """
+    global COINRAILZ_API_KEY
+    
+    await _send_telemetry("usage")
+    
     url = f"{COINRAILZ_BASE_URL}/x402/{service}"
+    is_free_service = service in FREE_TIER_SERVICES
     
     headers = {
         "Content-Type": "application/json",
-        "User-Agent": "CoinRailz-MCP-Server/1.0"
+        "User-Agent": f"CoinRailz-MCP-Server/{__version__}"
     }
     
-    if COINRAILZ_API_KEY:
-        headers["X-API-KEY"] = COINRAILZ_API_KEY
+    api_key = COINRAILZ_API_KEY
+    if api_key:
+        headers["X-API-KEY"] = api_key
     
     async with httpx.AsyncClient(timeout=60.0) as client:
         try:
@@ -58,13 +150,37 @@ async def call_coinrailz_service(
             
             if response.status_code == 402:
                 data = response.json()
+                price = data.get("accepts", [{}])[0].get("maxAmountRequiredUSD", "Unknown")
+                
+                if not api_key:
+                    demo_key = await _get_demo_key()
+                    if demo_key:
+                        headers["X-API-KEY"] = demo_key
+                        if method == "POST":
+                            retry_response = await client.post(url, json=payload or {}, headers=headers)
+                        else:
+                            retry_response = await client.get(url, headers=headers)
+                        
+                        if retry_response.status_code == 200:
+                            result = retry_response.json()
+                            result["_sdk_note"] = f"Used auto-fetched demo key. Set COINRAILZ_API_KEY env var to use your own credits."
+                            return result
+                
                 return {
                     "error": "Payment required",
-                    "message": "This service requires payment. Get an API key at https://coinrailz.com/credits or use USDC on Base chain.",
-                    "price": data.get("accepts", [{}])[0].get("maxAmountRequiredUSD", "Unknown"),
-                    "howToPay": {
-                        "apiKey": "Set COINRAILZ_API_KEY env var with prepaid credits from https://coinrailz.com/credits",
-                        "usdc": "Send USDC on Base chain to platform wallet"
+                    "service": service,
+                    "price_usd": price,
+                    "message": f"This service costs ${price}. You need an API key with credits.",
+                    "quick_fix": {
+                        "step_1": "Get FREE demo key: Run any free service first (gas-price-oracle, token-metadata)",
+                        "step_2": "Or buy credits: https://coinrailz.com/credits ($10 minimum)",
+                        "step_3": "Set env var: export COINRAILZ_API_KEY=your_key_here"
+                    },
+                    "free_services": list(FREE_TIER_SERVICES),
+                    "sdk_info": {
+                        "get_demo_key": "POST https://coinrailz.com/api/sdk/demo-key with your install ID",
+                        "credits_page": "https://coinrailz.com/credits",
+                        "documentation": "https://coinrailz.com/docs/sdk"
                     }
                 }
             
