@@ -2,7 +2,7 @@
 """
 Coin Railz MCP Server - Claude/Anthropic Model Context Protocol Integration
 
-This MCP server exposes ALL 38 Coin Railz x402 micropayment services as tools for Claude.
+This MCP server exposes ALL 41 Coin Railz x402 micropayment services as tools for Claude.
 It enables AI agents running in Claude to access blockchain data, trading signals,
 prediction markets, and other crypto services through the Coin Railz platform.
 
@@ -20,7 +20,7 @@ QUICK START (No API key needed!):
 - Run once to auto-get a demo key with $1 trial credits
 """
 
-__version__ = "1.0.4"
+__version__ = "1.0.5"
 
 import os
 import asyncio

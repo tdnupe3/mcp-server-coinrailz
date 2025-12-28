@@ -5,7 +5,7 @@
 [![PyPI version](https://badge.fury.io/py/coinrailz-mcp.svg)](https://pypi.org/project/coinrailz-mcp/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Model Context Protocol (MCP) server that exposes **38 Coin Railz x402 micropayment services** to Claude and other LLMs. Access blockchain data, trading signals, prediction markets, stock/forex sentiment, and crypto analytics directly from Claude.
+A Model Context Protocol (MCP) server that exposes **41 Coin Railz x402 micropayment services** to Claude and other LLMs. Access blockchain data, trading signals, prediction markets, stock/forex sentiment, and crypto analytics directly from Claude.
 
 ## What is MCP?
 
@@ -13,7 +13,7 @@ MCP (Model Context Protocol) is Anthropic's open standard for connecting AI mode
 
 ## Features
 
-- **38 Crypto Tools for Claude**: Complete coverage of blockchain analytics, trading, DeFi, and traditional markets
+- **41 Crypto Tools for Claude**: Complete coverage of blockchain analytics, trading, DeFi, and traditional markets
 - **First-Call Free**: `gas-price-oracle` and `token-metadata` are FREE for first-time users
 - **API Key Authentication**: Simple prepaid credits system - no blockchain knowledge required
 - **x402 Protocol Support**: Native USDC payments on Base chain for crypto-native agents
@@ -63,7 +63,7 @@ Add to your Claude Desktop configuration:
 
 **Free Trial**: `gas-price-oracle` and `token-metadata` are FREE for your first call!
 
-## Available Tools (38)
+## Available Tools (41)
 
 ### Category 1: Discovery & Testing (1)
 | Tool | Description | Price |

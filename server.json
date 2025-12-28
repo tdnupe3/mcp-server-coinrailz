@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
   "name": "io.github.tdnupe3/coinrailz",
-  "description": "38 crypto micropayment services: trading intelligence, DEX analytics, prediction markets, stock/forex sentiment via x402 protocol",
+  "description": "41 crypto micropayment services: trading intelligence, DEX analytics, prediction markets, stock/forex sentiment via x402 protocol",
   "repository": {
     "url": "https://github.com/tdnupe3/mcp-server-coinrailz",
     "source": "github"
   },
-  "version": "1.0.3",
+  "version": "1.0.5",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "coinrailz-mcp",
-      "version": "1.0.3",
+      "version": "1.0.5",
       "transport": {
         "type": "stdio"
       },
