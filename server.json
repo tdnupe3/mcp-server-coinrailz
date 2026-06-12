@@ -1,7 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.coinrailz/mcp",
+  "title": "Coin Railz",
   "description": "63 paid services via USDC: crypto analytics, satellite, IoT, AI inference, prediction markets.",
+  "icon": "https://coinrailz.com/favicon.png",
   "repository": {
     "url": "https://github.com/tdnupe3/mcp-server-coinrailz",
     "source": "github"
