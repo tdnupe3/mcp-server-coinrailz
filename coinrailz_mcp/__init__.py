@@ -2,16 +2,17 @@
 """
 Coin Railz MCP Server - Claude/Anthropic Model Context Protocol Integration
 
-This MCP server exposes ALL 41 Coin Railz x402 micropayment services as tools for Claude.
+This MCP server exposes ALL 63 Coin Railz x402 micropayment services as tools for Claude.
 It enables AI agents running in Claude to access blockchain data, trading signals,
-prediction markets, and other crypto services through the Coin Railz platform.
+prediction markets, satellite data, IoT sensor feeds, and AI inference through the
+Coin Railz payment infrastructure.
 
 Payment Methods:
 1. API Key (prepaid credits) - RECOMMENDED: Purchase credits at https://coinrailz.com/credits
 2. x402 USDC payments - For blockchain-native agents
 
 Usage:
-1. Install: pip install mcp httpx
+1. Install: pip install coinrailz-mcp
 2. Configure in Claude Desktop config
 3. Set COINRAILZ_API_KEY environment variable (or use first-call-free on select services)
 
@@ -20,7 +21,7 @@ QUICK START (No API key needed!):
 - Run once to auto-get a demo key with $1 trial credits
 """
 
-__version__ = "1.0.5"
+__version__ = "1.1.0"
 
 import os
 import asyncio
@@ -265,7 +266,7 @@ async def get_token_price(token_address: str, chain: str = "ethereum") -> str:
     Returns:
         Token price in USD with source information.
     
-    Price: $0.15
+    Price: $0.25
     """
     payload = {"tokenAddress": token_address, "chain": chain}
     result = await call_coinrailz_service("token-price", payload)
@@ -376,7 +377,7 @@ async def get_trading_signal(symbol: str, timeframe: str = "1h") -> str:
     Returns:
         Buy/sell signal with indicators, confidence, and target prices.
     
-    Price: $0.50
+    Price: $1.00
     """
     payload = {"symbol": symbol, "timeframe": timeframe}
     result = await call_coinrailz_service("trading-signal", payload)
@@ -394,7 +395,7 @@ async def get_sentiment_analysis(query: str, sources: List[str] = None) -> str:
     Returns:
         Sentiment score, volume trends, and key narratives.
     
-    Price: $0.30
+    Price: $0.50
     """
     payload = {
         "query": query,
@@ -415,7 +416,7 @@ async def get_arbitrage_opportunities(chains: List[str] = None, min_profit_pct: 
     Returns:
         List of arbitrage opportunities with routes and expected profit.
     
-    Price: $1.00
+    Price: $1.25
     """
     payload = {
         "chains": chains or ["ethereum", "base", "polygon", "arbitrum"],
@@ -436,7 +437,7 @@ async def get_correlation_matrix(tokens: List[str], timeframe: str = "7d") -> st
     Returns:
         Correlation coefficients between all token pairs.
     
-    Price: $0.50
+    Price: $0.75
     """
     payload = {"tokens": tokens, "timeframe": timeframe}
     result = await call_coinrailz_service("correlation-matrix", payload)
@@ -454,7 +455,7 @@ async def get_risk_metrics(token_address: str, chain: str = "ethereum") -> str:
     Returns:
         Volatility, VaR, max drawdown, and other risk metrics.
     
-    Price: $0.40
+    Price: $1.00
     """
     payload = {"tokenAddress": token_address, "chain": chain}
     result = await call_coinrailz_service("risk-metrics", payload)
@@ -472,7 +473,7 @@ async def get_batch_quote(tokens: List[str], chain: str = "ethereum") -> str:
     Returns:
         Prices and metadata for all requested tokens.
     
-    Price: $0.25
+    Price: $0.40
     """
     payload = {"tokens": tokens, "chain": chain}
     result = await call_coinrailz_service("batch-quote", payload)
@@ -527,7 +528,7 @@ async def build_transaction(
     Returns:
         Unsigned transaction object with gas estimates.
     
-    Price: $0.15
+    Price: $0.30
     """
     payload = {
         "from": from_address,
@@ -553,7 +554,7 @@ async def manage_approvals(wallet_address: str, chain: str = "ethereum", action:
     Returns:
         List of token approvals with risk assessment.
     
-    Price: $0.30
+    Price: $0.20
     """
     payload = {
         "walletAddress": wallet_address,
@@ -584,7 +585,7 @@ async def bridge_tokens(
     Returns:
         Bridge route, fees, and estimated time.
     
-    Price: $0.50
+    Price: $2.00
     """
     payload = {
         "fromChain": from_chain,
@@ -599,7 +600,7 @@ async def bridge_tokens(
 
 
 # =============================================================================
-# CATEGORY 4: PREMIUM SERVICES (3 services)
+# CATEGORY 4: PREMIUM SERVICES (4 services)
 # =============================================================================
 
 @mcp.tool()
@@ -614,7 +615,7 @@ async def scan_smart_contract(contract_address: str, chain: str = "ethereum") ->
     Returns:
         Security analysis including vulnerabilities, rug pull risk, and audit score.
     
-    Price: $2.00
+    Price: $1.00
     """
     payload = {"contractAddress": contract_address, "chain": chain}
     result = await call_coinrailz_service("contract-scan", payload)
@@ -650,7 +651,7 @@ async def track_portfolio(wallet_address: str, chains: List[str] = None) -> str:
     Returns:
         Portfolio value, allocation, P&L, and historical performance.
     
-    Price: $0.75
+    Price: $0.50
     """
     payload = {
         "walletAddress": wallet_address,
@@ -671,7 +672,7 @@ async def optimize_portfolio(holdings: List[dict], risk_tolerance: str = "medium
     Returns:
         Rebalancing recommendations and optimal allocation.
     
-    Price: $1.00
+    Price: $2.00
     """
     payload = {
         "holdings": holdings,
@@ -697,7 +698,7 @@ async def get_property_valuation(address: str = None, property_id: str = None) -
     Returns:
         Estimated value, comparable sales, and market trends.
     
-    Price: $5.00
+    Price: $0.75
     """
     payload = {}
     if address:
@@ -718,7 +719,7 @@ async def analyze_lease(lease_terms: dict) -> str:
     Returns:
         Lease analysis with market comparison and recommendations.
     
-    Price: $3.00
+    Price: $1.00
     """
     result = await call_coinrailz_service("lease-analysis", lease_terms)
     return json.dumps(result, indent=2)
@@ -734,7 +735,7 @@ async def track_construction_progress(project_id: str) -> str:
     Returns:
         Progress updates, timeline, and budget status.
     
-    Price: $2.00
+    Price: $1.50
     """
     payload = {"projectId": project_id}
     result = await call_coinrailz_service("construction-progress", payload)
@@ -757,7 +758,7 @@ async def get_credit_risk_score(entity_id: str, entity_type: str = "individual")
     Returns:
         Credit score, risk factors, and lending recommendations.
     
-    Price: $2.00
+    Price: $1.25
     """
     payload = {"entityId": entity_id, "entityType": entity_type}
     result = await call_coinrailz_service("credit-risk-score", payload)
@@ -774,7 +775,7 @@ async def detect_fraud(transaction_data: dict) -> str:
     Returns:
         Fraud score, risk indicators, and recommendations.
     
-    Price: $0.50
+    Price: $0.75
     """
     result = await call_coinrailz_service("fraud-detection", transaction_data)
     return json.dumps(result, indent=2)
@@ -791,7 +792,7 @@ async def run_compliance_check(entity_id: str, check_type: str = "aml") -> str:
     Returns:
         Compliance status, flags, and required actions.
     
-    Price: $1.00
+    Price: $1.75
     """
     payload = {"entityId": entity_id, "checkType": check_type}
     result = await call_coinrailz_service("compliance-check", payload)
@@ -799,7 +800,7 @@ async def run_compliance_check(entity_id: str, check_type: str = "aml") -> str:
 
 
 # =============================================================================
-# CATEGORY 7: PREDICTION MARKETS (4 services)
+# CATEGORY 7: POLYMARKET PREDICTION MARKETS (4 services)
 # =============================================================================
 
 @mcp.tool()
@@ -833,7 +834,7 @@ async def get_polymarket_odds(event_id: str) -> str:
     Returns:
         Current odds, volume, and price history.
     
-    Price: $0.15
+    Price: $0.50
     """
     payload = {"eventId": event_id}
     result = await call_coinrailz_service("polymarket-odds", payload)
@@ -851,7 +852,7 @@ async def search_polymarket(query: str, limit: int = 10) -> str:
     Returns:
         Matching prediction markets with current odds.
     
-    Price: $0.20
+    Price: $0.25
     """
     payload = {"query": query, "limit": limit}
     result = await call_coinrailz_service("polymarket-search", payload)
@@ -887,7 +888,7 @@ async def get_prediction_market_odds(event_id: str = None, query: str = None) ->
 @mcp.tool()
 async def create_agent_wallet(agent_name: str, agent_type: str = "trading") -> str:
     """
-    Create a new wallet for an AI agent with managed keys.
+    Create a new persistent wallet for an AI agent via Coinbase CDP.
     
     Args:
         agent_name: Name identifier for the agent
@@ -896,7 +897,7 @@ async def create_agent_wallet(agent_name: str, agent_type: str = "trading") -> s
     Returns:
         New wallet address and management details.
     
-    Price: $1.00
+    Price: $2.00
     """
     payload = {"agentName": agent_name, "agentType": agent_type}
     result = await call_coinrailz_service("agent-create-wallet", payload)
@@ -913,7 +914,7 @@ async def create_instant_agent_wallet(purpose: str = "general") -> str:
     Returns:
         Temporary wallet address with 24-hour validity.
     
-    Price: $0.50
+    Price: $1.00
     """
     payload = {"purpose": purpose}
     result = await call_coinrailz_service("instant-agent-wallet", payload)
@@ -931,7 +932,7 @@ async def verify_agent_identity(agent_address: str, proof: str = None) -> str:
     Returns:
         Verification status and on-chain identity NFT details.
     
-    Price: $2.00
+    Price: $5.00
     """
     payload = {"agentAddress": agent_address}
     if proof:
@@ -957,14 +958,14 @@ async def request_smart_contract_audit(contract_address: str, chain: str = "ethe
     Returns:
         Audit request confirmation and estimated delivery time.
     
-    Price: $1000 (full audit)
+    Price: $10.00
     """
     payload = {
         "contractAddress": contract_address,
         "chain": chain,
         "scope": scope
     }
-    result = await call_coinrailz_service("service/smart-contract-audit", payload)
+    result = await call_coinrailz_service("smart-contract-audit", payload)
     return json.dumps(result, indent=2)
 
 @mcp.tool()
@@ -984,14 +985,14 @@ async def request_payment_processing(
     Returns:
         Payment processing setup details and integration instructions.
     
-    Price: $50/hour
+    Price: $0.50
     """
     payload = {
         "merchantId": merchant_id,
         "paymentType": payment_type,
         "currencies": currencies or ["USDC", "ETH", "USDT"]
     }
-    result = await call_coinrailz_service("service/payment-processing", payload)
+    result = await call_coinrailz_service("payment-processing", payload)
     return json.dumps(result, indent=2)
 
 @mcp.tool()
@@ -1011,19 +1012,19 @@ async def request_compliance_consultation(
     Returns:
         Consultation request confirmation and preliminary assessment.
     
-    Price: $500
+    Price: $5.00
     """
     payload = {
         "entityType": entity_type,
         "jurisdictions": jurisdictions,
         "services": services
     }
-    result = await call_coinrailz_service("service/compliance-consultation", payload)
+    result = await call_coinrailz_service("compliance-consultation", payload)
     return json.dumps(result, indent=2)
 
 
 # =============================================================================
-# CATEGORY 10: TRADITIONAL MARKETS (2 services) - Added Dec 2025
+# CATEGORY 10: TRADITIONAL MARKETS (2 services)
 # =============================================================================
 
 @mcp.tool()
@@ -1084,6 +1085,574 @@ async def get_forex_sentiment(
         "includeGeopolitical": include_geopolitical
     }
     result = await call_coinrailz_service("forex-sentiment", payload)
+    return json.dumps(result, indent=2)
+
+
+# =============================================================================
+# CATEGORY 11: KALSHI PREDICTION MARKETS (3 services)
+# =============================================================================
+
+@mcp.tool()
+async def get_kalshi_markets(category: str = None, limit: int = 20) -> str:
+    """
+    Get active markets from Kalshi, a CFTC-regulated prediction exchange.
+    
+    Args:
+        category: Optional category filter (politics, economics, weather, sports, etc.)
+        limit: Number of markets to return
+    
+    Returns:
+        Active Kalshi markets with current odds, volume, and resolution criteria.
+    
+    Price: $0.25
+    """
+    payload = {"limit": limit}
+    if category:
+        payload["category"] = category
+    result = await call_coinrailz_service("kalshi-markets", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_kalshi_odds(market_ticker: str) -> str:
+    """
+    Get current odds and orderbook for a specific Kalshi market.
+    
+    Args:
+        market_ticker: The Kalshi market ticker (e.g., PRES-2024-DJT)
+    
+    Returns:
+        Current yes/no prices, volume, open interest, and order book depth.
+    
+    Price: $0.25
+    """
+    payload = {"marketTicker": market_ticker}
+    result = await call_coinrailz_service("kalshi-odds", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def search_kalshi(query: str, limit: int = 10) -> str:
+    """
+    Search Kalshi prediction markets by keyword.
+    
+    Args:
+        query: Search query (e.g., "bitcoin", "fed rate", "election")
+        limit: Number of results to return
+    
+    Returns:
+        Matching Kalshi markets with current status and odds.
+    
+    Price: $0.25
+    """
+    payload = {"query": query, "limit": limit}
+    result = await call_coinrailz_service("kalshi-search", payload)
+    return json.dumps(result, indent=2)
+
+
+# =============================================================================
+# CATEGORY 12: SATELLITE & EARTH OBSERVATION (12 services)
+# =============================================================================
+
+@mcp.tool()
+async def get_fire_alerts(
+    latitude: float = None,
+    longitude: float = None,
+    radius_km: float = 100,
+    hours: int = 24
+) -> str:
+    """
+    Get real-time active fire detection data from NASA FIRMS satellites.
+    
+    Args:
+        latitude: Center latitude for area search (-90 to 90)
+        longitude: Center longitude for area search (-180 to 180)
+        radius_km: Search radius in kilometers
+        hours: Look-back period in hours (max 168)
+    
+    Returns:
+        Active fire detections with confidence, FRP (fire radiative power), and coordinates.
+    
+    Price: $0.15
+    """
+    payload = {"radiusKm": radius_km, "hours": hours}
+    if latitude is not None:
+        payload["latitude"] = latitude
+    if longitude is not None:
+        payload["longitude"] = longitude
+    result = await call_coinrailz_service("fire-alerts", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_weather_imagery(
+    latitude: float,
+    longitude: float,
+    layer: str = "GOES_East_ABI_Band13_Clean_Infrared"
+) -> str:
+    """
+    Get high-resolution weather satellite imagery from NASA GIBS.
+    
+    Args:
+        latitude: Center latitude (-90 to 90)
+        longitude: Center longitude (-180 to 180)
+        layer: Imagery layer. Options: GOES_East_ABI_Band13_Clean_Infrared,
+               MODIS_Terra_CorrectedReflectance_TrueColor, VIIRS_SNPP_DayNightBand_ENCC
+    
+    Returns:
+        Satellite imagery tile URL, metadata, and current weather pattern description.
+    
+    Price: $0.15
+    """
+    payload = {"latitude": latitude, "longitude": longitude, "layer": layer}
+    result = await call_coinrailz_service("weather-imagery", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_vegetation_health(
+    latitude: float,
+    longitude: float,
+    date: str = None
+) -> str:
+    """
+    Get NDVI vegetation health indices from satellite data.
+    
+    Args:
+        latitude: Center latitude (-90 to 90)
+        longitude: Center longitude (-180 to 180)
+        date: Optional date (YYYY-MM-DD). Defaults to most recent available.
+    
+    Returns:
+        NDVI values, vegetation health classification, and trend vs prior period.
+    
+    Price: $0.15
+    """
+    payload = {"latitude": latitude, "longitude": longitude}
+    if date:
+        payload["date"] = date
+    result = await call_coinrailz_service("vegetation", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def detect_floods(
+    latitude: float,
+    longitude: float,
+    date: str = None
+) -> str:
+    """
+    Detect flood extent from ESA Sentinel-1 SAR satellite data.
+    
+    Args:
+        latitude: Center latitude (-90 to 90)
+        longitude: Center longitude (-180 to 180)
+        date: Optional date (YYYY-MM-DD). Defaults to most recent available.
+    
+    Returns:
+        Flood extent mapping, affected area estimate, and change vs baseline.
+    
+    Price: $0.25
+    """
+    payload = {"latitude": latitude, "longitude": longitude}
+    if date:
+        payload["date"] = date
+    result = await call_coinrailz_service("flood-detection", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_air_quality(
+    latitude: float,
+    longitude: float
+) -> str:
+    """
+    Get atmospheric pollutant concentrations from ESA Sentinel-5P satellite.
+    
+    Args:
+        latitude: Latitude (-90 to 90)
+        longitude: Longitude (-180 to 180)
+    
+    Returns:
+        NO2, SO2, CO, O3, and aerosol concentrations with AQI classification.
+    
+    Price: $0.15
+    """
+    payload = {"latitude": latitude, "longitude": longitude}
+    result = await call_coinrailz_service("air-quality", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_land_use(
+    latitude: float,
+    longitude: float
+) -> str:
+    """
+    Get land cover classification from ESA WorldCover satellite data.
+    
+    Args:
+        latitude: Latitude (-90 to 90)
+        longitude: Longitude (-180 to 180)
+    
+    Returns:
+        Land use classification (cropland, forest, urban, water, etc.) with percentages.
+    
+    Price: $0.15
+    """
+    payload = {"latitude": latitude, "longitude": longitude}
+    result = await call_coinrailz_service("land-use", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_satellite_earthdata(
+    dataset: str,
+    latitude: float = None,
+    longitude: float = None,
+    date: str = None
+) -> str:
+    """
+    NASA Earthdata gateway — access precipitation, SST, soil moisture, and ocean data.
+    
+    Args:
+        dataset: Dataset to query. Options: precipitation, sst, soil_moisture, ocean_color, granules
+        latitude: Optional latitude filter (-90 to 90)
+        longitude: Optional longitude filter (-180 to 180)
+        date: Optional date (YYYY-MM-DD)
+    
+    Returns:
+        NASA satellite data for the requested dataset and location.
+    
+    Price: $0.25
+    """
+    payload = {"dataset": dataset}
+    if latitude is not None:
+        payload["latitude"] = latitude
+    if longitude is not None:
+        payload["longitude"] = longitude
+    if date:
+        payload["date"] = date
+    result = await call_coinrailz_service("satellite-earthdata", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def search_earthdata_granules(
+    short_name: str,
+    latitude: float = None,
+    longitude: float = None,
+    date_start: str = None,
+    date_end: str = None,
+    limit: int = 10
+) -> str:
+    """
+    Search 1B+ NASA satellite granules in the Earthdata catalog.
+    
+    Args:
+        short_name: Dataset short name (e.g., GPM_3IMERGHH, MODIS_Terra_L2, SMAP_L3)
+        latitude: Optional center latitude for spatial filter
+        longitude: Optional center longitude for spatial filter
+        date_start: Start date (YYYY-MM-DD)
+        date_end: End date (YYYY-MM-DD)
+        limit: Maximum results to return
+    
+    Returns:
+        Granule metadata including download URLs, coverage, and file sizes.
+    
+    Price: $0.25
+    """
+    payload = {"shortName": short_name, "limit": limit}
+    if latitude is not None:
+        payload["latitude"] = latitude
+    if longitude is not None:
+        payload["longitude"] = longitude
+    if date_start:
+        payload["dateStart"] = date_start
+    if date_end:
+        payload["dateEnd"] = date_end
+    result = await call_coinrailz_service("earthdata-granules", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_precipitation_data(
+    latitude: float,
+    longitude: float,
+    date: str = None
+) -> str:
+    """
+    Get real-time observed rain rate and accumulated precipitation from NASA GPM.
+    
+    Args:
+        latitude: Latitude (-90 to 90)
+        longitude: Longitude (-180 to 180)
+        date: Optional date (YYYY-MM-DD). Defaults to most recent.
+    
+    Returns:
+        Precipitation rate (mm/hr), accumulation, and storm tracking data.
+    
+    Price: $0.25
+    """
+    payload = {"latitude": latitude, "longitude": longitude}
+    if date:
+        payload["date"] = date
+    result = await call_coinrailz_service("earthdata-precipitation", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_sea_surface_temperature(
+    latitude: float,
+    longitude: float,
+    date: str = None
+) -> str:
+    """
+    Get sea surface temperature from NASA MODIS satellite data.
+    
+    Args:
+        latitude: Latitude (-90 to 90)
+        longitude: Longitude (-180 to 180)
+        date: Optional date (YYYY-MM-DD). Defaults to most recent.
+    
+    Returns:
+        SST in Celsius/Fahrenheit, anomaly vs climatological mean, and trend.
+    
+    Price: $0.25
+    """
+    payload = {"latitude": latitude, "longitude": longitude}
+    if date:
+        payload["date"] = date
+    result = await call_coinrailz_service("earthdata-sst", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_soil_moisture(
+    latitude: float,
+    longitude: float,
+    date: str = None
+) -> str:
+    """
+    Get soil moisture granule data from NASA SMAP satellite.
+    
+    Args:
+        latitude: Latitude (-90 to 90)
+        longitude: Longitude (-180 to 180)
+        date: Optional date (YYYY-MM-DD). Defaults to most recent.
+    
+    Returns:
+        Volumetric soil moisture content, freeze/thaw state, and agricultural relevance.
+    
+    Price: $0.25
+    """
+    payload = {"latitude": latitude, "longitude": longitude}
+    if date:
+        payload["date"] = date
+    result = await call_coinrailz_service("earthdata-soil-moisture", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_ocean_color(
+    latitude: float,
+    longitude: float,
+    date: str = None
+) -> str:
+    """
+    Get MODIS Aqua ocean chlorophyll-a concentration and water quality data.
+    
+    Args:
+        latitude: Latitude (-90 to 90)
+        longitude: Longitude (-180 to 180)
+        date: Optional date (YYYY-MM-DD). Defaults to most recent.
+    
+    Returns:
+        Chlorophyll-a concentration (mg/m³), ocean color index, and phytoplankton activity.
+    
+    Price: $0.25
+    """
+    payload = {"latitude": latitude, "longitude": longitude}
+    if date:
+        payload["date"] = date
+    result = await call_coinrailz_service("earthdata-ocean-color", payload)
+    return json.dumps(result, indent=2)
+
+
+# =============================================================================
+# CATEGORY 13: IoT & DePIN DATA (5 services)
+# =============================================================================
+
+@mcp.tool()
+async def get_fleet_telematics(
+    device_id: str = None,
+    fleet_id: str = None,
+    limit: int = 10
+) -> str:
+    """
+    Get real-time fleet data: GPS location, fuel, speed, and diagnostics from IoT devices.
+    
+    Args:
+        device_id: Specific device ID to query
+        fleet_id: Or query all devices in a fleet
+        limit: Maximum number of device records to return
+    
+    Returns:
+        GPS coordinates, speed, fuel level, engine diagnostics, and last-seen timestamp.
+    
+    Price: $0.10
+    """
+    payload = {"limit": limit}
+    if device_id:
+        payload["deviceId"] = device_id
+    if fleet_id:
+        payload["fleetId"] = fleet_id
+    result = await call_coinrailz_service("fleet-telematics", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def get_weather_station_data(
+    station_id: str = None,
+    latitude: float = None,
+    longitude: float = None,
+    radius_km: float = 10
+) -> str:
+    """
+    Get hyperlocal weather data from IoT weather station network.
+    
+    Args:
+        station_id: Specific weather station ID
+        latitude: Or find nearest station by coordinates
+        longitude: Longitude for nearest-station search
+        radius_km: Search radius in kilometers
+    
+    Returns:
+        Temperature, humidity, pressure, wind speed/direction, and precipitation.
+    
+    Price: $0.10
+    """
+    payload = {"radiusKm": radius_km}
+    if station_id:
+        payload["stationId"] = station_id
+    if latitude is not None:
+        payload["latitude"] = latitude
+    if longitude is not None:
+        payload["longitude"] = longitude
+    result = await call_coinrailz_service("weather-station-data", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def read_iot_sensor(device_id: str, sensor_type: str = "all") -> str:
+    """
+    Get a single sensor reading from a registered IoT device.
+    
+    Args:
+        device_id: The registered IoT device ID
+        sensor_type: Sensor type to read. Options: temperature, humidity, pressure,
+                     co2, motion, light, vibration, all
+    
+    Returns:
+        Current sensor value(s) with unit, timestamp, and device metadata.
+    
+    Price: $0.05
+    """
+    payload = {"deviceId": device_id, "sensorType": sensor_type}
+    result = await call_coinrailz_service("iot-sensor-reading", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def stream_iot_device(device_id: str, duration_seconds: int = 60) -> str:
+    """
+    Get real-time data stream from an IoT device.
+    
+    Args:
+        device_id: The registered IoT device ID
+        duration_seconds: Duration to collect data (max 300 seconds)
+    
+    Returns:
+        Time-series sensor readings for the requested duration.
+    
+    Price: $0.10
+    """
+    payload = {"deviceId": device_id, "durationSeconds": min(duration_seconds, 300)}
+    result = await call_coinrailz_service("iot-device-stream", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def export_iot_bulk_data(
+    device_id: str,
+    start_date: str,
+    end_date: str,
+    format: str = "json"
+) -> str:
+    """
+    Export historical bulk data from an IoT device.
+    
+    Args:
+        device_id: The registered IoT device ID
+        start_date: Start date for export (YYYY-MM-DD)
+        end_date: End date for export (YYYY-MM-DD)
+        format: Export format. Options: json, csv
+    
+    Returns:
+        Historical sensor data export with download URL and record count.
+    
+    Price: $0.25
+    """
+    payload = {
+        "deviceId": device_id,
+        "startDate": start_date,
+        "endDate": end_date,
+        "format": format
+    }
+    result = await call_coinrailz_service("iot-bulk-data", payload)
+    return json.dumps(result, indent=2)
+
+
+# =============================================================================
+# CATEGORY 14: AI INFERENCE & YIELD (2 services)
+# =============================================================================
+
+@mcp.tool()
+async def run_ai_inference(
+    prompt: str,
+    model: str = "gpt-4o-mini",
+    max_tokens: int = 500,
+    system_prompt: str = None
+) -> str:
+    """
+    Pay-per-call GPT-4o-mini inference via x402 USDC micropayments.
+    Ideal for agents that need AI capabilities without managing OpenAI API keys.
+    
+    Args:
+        prompt: The user prompt / question
+        model: Model to use. Options: gpt-4o-mini, gpt-4o, gpt-4-turbo
+        max_tokens: Maximum tokens in response (max 4000)
+        system_prompt: Optional system prompt to set context
+    
+    Returns:
+        AI-generated text response with token usage and cost breakdown.
+    
+    Price: $0.05
+    """
+    payload = {
+        "prompt": prompt,
+        "model": model,
+        "maxTokens": min(max_tokens, 4000)
+    }
+    if system_prompt:
+        payload["systemPrompt"] = system_prompt
+    result = await call_coinrailz_service("ai-inference", payload)
+    return json.dumps(result, indent=2)
+
+@mcp.tool()
+async def find_solana_yield(
+    min_apy: float = 0.0,
+    max_risk: str = "medium",
+    asset: str = "USDC"
+) -> str:
+    """
+    Get real-time Solana lending and yield opportunities from Kamino and other protocols.
+    
+    Args:
+        min_apy: Minimum APY filter (percentage, e.g., 3.0 for 3%)
+        max_risk: Maximum risk level. Options: low, medium, high
+        asset: Asset to find yield for. Options: USDC, SOL, USDT, mSOL
+    
+    Returns:
+        Ranked yield opportunities with current APY, TVL, protocol, and risk rating.
+    
+    Price: $0.25
+    """
+    payload = {"minApy": min_apy, "maxRisk": max_risk, "asset": asset}
+    result = await call_coinrailz_service("solana-yield-finder", payload)
     return json.dumps(result, indent=2)
 
 
