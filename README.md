@@ -1,6 +1,6 @@
 # Coin Railz MCP Server
 
-<!-- mcp-name: io.github.tdnupe3/coinrailz -->
+<!-- mcp-name: com.coinrailz/mcp -->
 
 [![PyPI version](https://badge.fury.io/py/coinrailz-mcp.svg)](https://pypi.org/project/coinrailz-mcp/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
