@@ -56,8 +56,8 @@ Changelog = "https://github.com/tdnupe3/mcp-server-coinrailz/releases"
 coinrailz-mcp = "coinrailz_mcp:main"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [tool.hatch.build.targets.sdist]
 include = [
