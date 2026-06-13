@@ -1,6 +1,6 @@
 [project]
 name = "coinrailz-mcp"
-version = "1.1.0"
+version = "1.2.0"
 description = "MCP server exposing 63 Coin Railz x402 micropayment services — crypto analytics, trading signals, NASA/ESA satellite data, IoT sensors, AI inference, and prediction markets"
 readme = "README.md"
 requires-python = ">=3.10"
