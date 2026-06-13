@@ -8,14 +8,14 @@
     "url": "https://github.com/tdnupe3/mcp-server-coinrailz",
     "source": "github"
   },
-  "version": "1.1.0",
+  "version": "1.2.0",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "coinrailz-mcp",
       "registry": "pypi",
       "name": "coinrailz-mcp",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "runtime": "python",
       "runtimeArguments": [],
       "packageArguments": [],
